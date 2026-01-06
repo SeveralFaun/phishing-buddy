@@ -18,7 +18,7 @@ A clean, testable CLI tool for phishing email triage that parses `.eml` files an
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/SeveralFaun/phishing-buddy>
 cd phishing-buddy
 ```
 
@@ -325,16 +325,6 @@ pytest -v
 
 ## Development
 
-### Type Hints
-
-All code uses type hints for better IDE support and type checking.
-
-### Code Style
-
-- Follow PEP 8
-- Use docstrings for all functions
-- Keep functions focused and testable
-
 ### Adding New Features
 
 1. Add the function stub to `extract.py` or `analyze.py`
@@ -342,13 +332,5 @@ All code uses type hints for better IDE support and type checking.
 3. Update `report.py` to call the new function
 4. Implement the function
 5. Ensure tests pass
-
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here]
 
 
