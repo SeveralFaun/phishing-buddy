@@ -1,0 +1,22 @@
+From: phisher@evil.com
+To: victim@example.com
+Subject: Urgent: Verify Your Account
+Date: Mon, 1 Jan 2024 12:00:00 +0000
+Message-ID: <phish123@evil.com>
+Return-Path: <phisher@evil.com>
+Authentication-Results: example.com; spf=fail smtp.mailfrom=evil.com; dkim=fail; dmarc=fail
+List-Unsubscribe: <https://evil.com/unsubscribe>
+
+This is a test phishing email.
+
+Please click here: https://evil.com/phish
+Or visit hxxp://malicious[.]com/login
+
+<html>
+<body>
+<p>Click <a href="https://evil.com/phish">https://bank.com/login</a> to verify your account.</p>
+<img src="https://evil.com/tracker.png" />
+</body>
+</html>
+
+

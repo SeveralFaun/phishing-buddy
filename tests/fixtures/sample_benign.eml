@@ -1,0 +1,19 @@
+From: sender@example.com
+To: recipient@example.com
+Subject: Regular Newsletter
+Date: Mon, 1 Jan 2024 12:00:00 +0000
+Message-ID: <benign123@example.com>
+Return-Path: <sender@example.com>
+Authentication-Results: example.com; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass
+
+This is a test benign email.
+
+Visit our website: https://example.com/newsletter
+
+<html>
+<body>
+<p>Check out our latest updates at <a href="https://example.com/newsletter">https://example.com/newsletter</a></p>
+</body>
+</html>
+
+

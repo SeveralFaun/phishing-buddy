@@ -1,0 +1,2 @@
+[console_scripts]
+phishing-buddy = phishing_buddy.cli:main
