@@ -18,7 +18,7 @@ A clean, testable CLI tool for phishing email triage that parses `.eml` files an
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/SeveralFaun/phishing-buddy>
+git clone https://github.com/SeveralFaun/phishing-buddy
 cd phishing-buddy
 ```
 
