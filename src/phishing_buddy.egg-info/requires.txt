@@ -1,4 +1,0 @@
-tldextract>=5.0.0
-
-[dev]
-pytest>=7.0.0
