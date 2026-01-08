@@ -7,39 +7,36 @@ from phishing_buddy.models import AuthSummary
 
 
 def test_parse_authentication_results_basic():
-    """Test parsing of basic Authentication-Results header."""
     headers = {
         "authentication-results": [
             "example.com; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass"
         ]
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        parse_authentication_results(headers)
+    result = parse_authentication_results(headers)
 
-    # Once implemented, should return:
-    # AuthSummary(spf="pass", dkim="pass", dmarc="pass", raw=[...])
+    assert result.spf == "pass"
+    assert result.dkim == "pass"
+    assert result.dmarc == "pass"
+    assert result.raw == headers["authentication-results"]
 
 
 def test_parse_authentication_results_failures():
-    """Test parsing of failed authentication results."""
     headers = {
         "authentication-results": [
             "example.com; spf=fail smtp.mailfrom=evil.com; dkim=fail; dmarc=fail"
         ]
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        parse_authentication_results(headers)
+    result = parse_authentication_results(headers)
 
-    # Once implemented, should return:
-    # AuthSummary(spf="fail", dkim="fail", dmarc="fail", raw=[...])
+    assert result.spf == "fail"
+    assert result.dkim == "fail"
+    assert result.dmarc == "fail"
+    assert result.raw == headers["authentication-results"]
 
 
 def test_parse_authentication_results_multiple():
-    """Test parsing when multiple Authentication-Results headers exist."""
     headers = {
         "authentication-results": [
             "server1.com; spf=pass",
@@ -47,43 +44,39 @@ def test_parse_authentication_results_multiple():
         ]
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        parse_authentication_results(headers)
+    result = parse_authentication_results(headers)
 
-    # Once implemented, should:
-    # - Parse all occurrences
-    # - Extract final statuses (may need to handle precedence)
-    # - Include all raw values in raw list
+    # We expect it to combine across multiple header occurrences
+    assert result.spf == "pass"
+    assert result.dkim == "pass"
+    assert result.dmarc == "pass"
+    assert result.raw == headers["authentication-results"]
 
 
 def test_parse_authentication_results_missing():
-    """Test parsing when Authentication-Results header is missing."""
     headers = {
         "from": ["sender@example.com"],
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        parse_authentication_results(headers)
+    result = parse_authentication_results(headers)
 
-    # Once implemented, should return:
-    # AuthSummary(spf="none", dkim="none", dmarc="none", raw=[])
+    # If header is missing, treat as "none"
+    assert result.spf == "unknown"
+    assert result.dkim == "unknown"
+    assert result.dmarc == "unknown"
+    assert result.raw == []
 
 
 def test_parse_authentication_results_error_statuses():
-    """Test parsing of error statuses (permerror, temperror)."""
     headers = {
         "authentication-results": [
             "example.com; spf=permerror; dkim=temperror; dmarc=neutral"
         ]
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        parse_authentication_results(headers)
+    result = parse_authentication_results(headers)
 
-    # Once implemented, should return:
-    # AuthSummary(spf="permerror", dkim="temperror", dmarc="neutral", raw=[...])
-
-
+    assert result.spf == "permerror"
+    assert result.dkim == "temperror"
+    assert result.dmarc == "neutral"
+    assert result.raw == headers["authentication-results"]

@@ -12,6 +12,24 @@ A clean, testable CLI tool for phishing email triage that parses `.eml` files an
 - Compute risk scores with explainable flags
 - Output JSON reports with optional human-friendly summaries
 
+## Demo
+
+### Analyze an email
+```bash
+phishing-buddy tests/samples/sample_phish.eml --summary
+```
+
+Result:
+![Sample Summary](demo/sample_summary.png)
+
+### Output JSON
+```bash
+phishing-buddy tests/samples/sample_phish.eml --out demo/report.json --pretty
+```
+
+Result:
+[Sample JSON File](demo/report.json)
+
 ## Installation
 
 ### Development Setup
@@ -205,97 +223,6 @@ phishing-buddy/
         └── sample_benign.eml
 ```
 
-## Implementation Status
-
-### ✅ Implemented
-
-- **EML Parsing**: Full implementation with header preservation and body extraction
-- **CLI Interface**: Complete argparse implementation with all options
-- **Data Models**: All dataclasses for the JSON schema
-- **Report Orchestration**: Builds reports and handles TODO functions gracefully
-- **Test Framework**: Comprehensive pytest tests for all TODO functions
-
-### 🔨 TODO (To Be Implemented)
-
-The following functions are stubbed with `NotImplementedError` and must be implemented:
-
-#### `extract.py`
-
-1. **`extract_urls_from_headers(headers)`**
-   - Extract URLs from email headers (From, Reply-To, List-Unsubscribe, etc.)
-   - Return `List[UrlFinding]` with source indicating the header name
-
-2. **`extract_urls_from_text(text, source)`**
-   - Extract URLs from plain text or HTML body
-   - Handle defanged patterns: `hxxp`/`hxxps`, `[.]`, `(.)`
-   - Extract `href`/`src` from HTML elements
-   - Strip trailing punctuation
-   - Provide context snippets
-
-3. **`extract_domains(url_findings)`**
-   - Extract domains from URLs using `urlparse().hostname`
-   - Normalize with `tldextract`
-   - Preserve IP addresses and localhost as-is
-   - Count occurrences per domain
-
-#### `analyze.py`
-
-1. **`parse_authentication_results(headers)`**
-   - Parse `Authentication-Results` headers
-   - Extract SPF, DKIM, DMARC statuses
-   - Handle multiple header occurrences
-
-2. **`detect_link_mismatch(html_text)`**
-   - Detect when visible anchor text domain differs from `href` domain
-   - Return `List[Flag]` with appropriate severity
-
-3. **`compute_risk_score(urls, domains, auth_summary, flags)`**
-   - Rule-based scoring (0-100)
-   - Consider URLs, domains, authentication results, and flags
-   - Return explainable flags for scoring decisions
-
-## How to Implement TODOs
-
-### 1. URL Extraction
-
-Start with `extract_urls_from_text` for plain text:
-- Use regex to find URL patterns
-- Handle defanged URLs by replacing patterns before extraction
-- Strip trailing punctuation (periods, commas, etc.)
-- Extract context (surrounding text)
-
-For HTML:
-- Use `html.parser` or `BeautifulSoup` to parse HTML
-- Extract `href` from `<a>`, `src` from `<img>`, etc.
-- Handle defanged URLs in HTML attributes
-
-### 2. Domain Extraction
-
-- Use `urllib.parse.urlparse()` to get `hostname` (not `netloc`)
-- Use `tldextract.extract()` to normalize domains
-- Check if hostname is an IP address (IPv4 or IPv6) or localhost
-- Count occurrences and sort by count
-
-### 3. Authentication Results
-
-- Parse `Authentication-Results` header format
-- Extract `spf=`, `dkim=`, `dmarc=` values
-- Handle multiple headers (may need precedence rules)
-- Default to "unknown" or "none" if missing
-
-### 4. Link Mismatch Detection
-
-- Parse HTML to find all `<a>` tags
-- Extract visible text and `href` attribute
-- Extract domains from both
-- Compare domains and flag mismatches
-
-### 5. Risk Scoring
-
-- Define rules (e.g., +10 for auth failures, +5 per suspicious domain, etc.)
-- Aggregate scores with caps
-- Generate flags explaining each contributing factor
-
 ## Testing
 
 Run all tests:
@@ -312,8 +239,6 @@ Run with verbose output:
 ```bash
 pytest -v
 ```
-
-**Note**: Tests are designed to fail initially (because functions raise `NotImplementedError`). Once you implement the functions, the tests should pass.
 
 ## Limitations
 
@@ -333,4 +258,12 @@ pytest -v
 4. Implement the function
 5. Ensure tests pass
 
+st tests/test_extract_urls.py
+```
 
+Run with verbose output:
+```bash
+pytest -v
+```
+
+**No

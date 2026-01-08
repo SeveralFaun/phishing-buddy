@@ -7,41 +7,44 @@ from phishing_buddy.models import UrlFinding
 
 
 def test_extract_urls_from_headers():
-    """Test extraction of URLs from email headers."""
     headers = {
         "from": ["sender@example.com"],
         "reply-to": ["https://example.com/reply"],
         "list-unsubscribe": ["<https://example.com/unsubscribe>"],
     }
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        extract_urls_from_headers(headers)
+    results = extract_urls_from_headers(headers)
 
-    # Once implemented, should return list of UrlFinding objects
-    # Expected behavior:
-    # - Extract URLs from header values
-    # - Return UrlFinding with source like "header:Reply-To"
-    # - Handle angle brackets and other formatting
+    urls = {u.url for u in results}
+    sources = {u.source for u in results}
+
+    assert "https://example.com/reply" in urls
+    assert "https://example.com/unsubscribe" in urls
+
+    # Source should include header name (your extractor uses lowercase keys from parser)
+    assert "header:reply-to" in sources
+    assert "header:list-unsubscribe" in sources
+
+    # Context should exist and be a string (truncated header value)
+    assert all(isinstance(u.context, str) or u.context is None for u in results)
 
 
 def test_extract_urls_from_text_plain():
-    """Test extraction of URLs from plain text body."""
     text = "Visit https://example.com/page for more info. Also check hxxp://evil.com/test"
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        extract_urls_from_text(text, "body:text/plain")
+    results = extract_urls_from_text(text, "body:text/plain")
+    urls = {u.url for u in results}
 
-    # Once implemented, should:
-    # - Extract https://example.com/page
-    # - Handle defanged hxxp://evil.com/test (convert to http://)
-    # - Strip trailing punctuation
-    # - Provide context snippets
+    assert "https://example.com/page" in urls
+    # defanged hxxp -> http
+    assert "http://evil.com/test" in urls
+
+    # should include context snippets
+    assert all(u.context is None or isinstance(u.context, str) for u in results)
+    assert any(u.context and "example.com/page" in u.context for u in results)
 
 
 def test_extract_urls_from_text_html():
-    """Test extraction of URLs from HTML body."""
     html = """
     <html>
     <body>
@@ -52,45 +55,36 @@ def test_extract_urls_from_text_html():
     </html>
     """
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        extract_urls_from_text(html, "body:text/html")
+    results = extract_urls_from_text(html, "body:text/html")
+    urls = {u.url for u in results}
 
-    # Once implemented, should:
-    # - Extract href from <a> tags
-    # - Extract src from <img> tags
-    # - Extract href from <link> tags
-    # - Handle defanged patterns in HTML
-    # - Provide context snippets
+    assert "https://example.com/link" in urls
+    assert "https://example.com/image.png" in urls
+    assert "https://example.com/style.css" in urls
+
+    # should provide context snippets from HTML
+    assert any(u.context and "href" in u.context.lower() for u in results)
 
 
 def test_extract_urls_defanged_patterns():
-    """Test handling of defanged URL patterns."""
     text = "Check hxxp://evil[.]com and hxxps://bad(.)site/path"
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        extract_urls_from_text(text, "body:text/plain")
+    results = extract_urls_from_text(text, "body:text/plain")
+    urls = {u.url for u in results}
 
-    # Once implemented, should:
-    # - Convert hxxp:// to http://
-    # - Convert hxxps:// to https://
-    # - Replace [.] with .
-    # - Replace (.) with .
-    # - Result: http://evil.com and https://bad.site/path
+    assert "http://evil.com" in urls
+    assert "https://bad.site/path" in urls
 
 
 def test_extract_urls_trailing_punctuation():
-    """Test stripping trailing punctuation from URLs."""
     text = "Visit https://example.com/page. Also see https://test.com/path!"
 
-    # This should raise NotImplementedError until implemented
-    with pytest.raises(NotImplementedError):
-        extract_urls_from_text(text, "body:text/plain")
+    results = extract_urls_from_text(text, "body:text/plain")
+    urls = {u.url for u in results}
 
-    # Once implemented, should:
-    # - Strip trailing . from first URL
-    # - Strip trailing ! from second URL
-    # - URLs should be: https://example.com/page and https://test.com/path
+    assert "https://example.com/page" in urls
+    assert "https://test.com/path" in urls
 
-
+    # Make sure punctuation-stripped versions are present (not the punctuated ones)
+    assert "https://example.com/page." not in urls
+    assert "https://test.com/path!" not in urls

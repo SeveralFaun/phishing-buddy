@@ -1,0 +1,136 @@
+{
+  "source_file": "tests\\samples\\sample_phish.eml",
+  "timestamp_utc": "2026-01-08T07:13:06.727573+00:00",
+  "headers": {
+    "from": [
+      "phisher@evil.com"
+    ],
+    "to": [
+      "victim@example.com"
+    ],
+    "subject": [
+      "Urgent: Verify Your Account"
+    ],
+    "date": [
+      "Mon, 01 Jan 2024 12:00:00 +0000"
+    ],
+    "message-id": [
+      "<phish123@evil.com>"
+    ],
+    "return-path": [
+      "<phisher@evil.com>"
+    ],
+    "authentication-results": [
+      "example.com; spf=fail smtp.mailfrom=evil.com; dkim=fail; dmarc=fail"
+    ],
+    "list-unsubscribe": [
+      "<https://evil.com/unsubscribe>"
+    ]
+  },
+  "key_headers": {
+    "From": "phisher@evil.com",
+    "To": "victim@example.com",
+    "Subject": "Urgent: Verify Your Account",
+    "Date": "Mon, 01 Jan 2024 12:00:00 +0000",
+    "Message-ID": "<phish123@evil.com>",
+    "Return-Path": "<phisher@evil.com>"
+  },
+  "auth_summary": {
+    "spf": "fail",
+    "dkim": "fail",
+    "dmarc": "fail",
+    "raw": [
+      "example.com; spf=fail smtp.mailfrom=evil.com; dkim=fail; dmarc=fail"
+    ]
+  },
+  "urls": [
+    {
+      "url": "https://evil.com/unsubscribe",
+      "source": "header:list-unsubscribe",
+      "context": "<https://evil.com/unsubscribe>"
+    },
+    {
+      "url": "https://evil.com/phish",
+      "source": "body:text/plain",
+      "context": "This is a test phishing email. Please click here: https://evil.com/phish Or visit hxxp://malicious[.]com/login <html> <body> <"
+    },
+    {
+      "url": "https://bank.com/login",
+      "source": "body:text/plain",
+      "context": "<html> <body> <p>Click <a href=\"https://evil.com/phish\">https://bank.com/login</a> to verify your account.</p> <img src=\"https://evil.com"
+    },
+    {
+      "url": "https://evil.com/tracker.png",
+      "source": "body:text/plain",
+      "context": "//bank.com/login</a> to verify your account.</p> <img src=\"https://evil.com/tracker.png\" /> </body> </html>"
+    },
+    {
+      "url": "http://malicious.com/login",
+      "source": "body:text/plain",
+      "context": "ail. Please click here: https://evil.com/phish Or visit hxxp://malicious[.]com/login <html> <body> <p>Click <a href=\"https://evil.com/phish"
+    }
+  ],
+  "domains": [
+    {
+      "domain": "evil.com",
+      "count": 3
+    },
+    {
+      "domain": "bank.com",
+      "count": 1
+    },
+    {
+      "domain": "malicious.com",
+      "count": 1
+    }
+  ],
+  "flags": [
+    {
+      "id": "AUTH_DMARC_FAIL",
+      "severity": "high",
+      "message": "DMARC reported as fail",
+      "evidence": {
+        "points": 25,
+        "dmarc": "fail"
+      }
+    },
+    {
+      "id": "AUTH_SPF_FAIL",
+      "severity": "med",
+      "message": "SPF reported as fail",
+      "evidence": {
+        "points": 15,
+        "spf": "fail"
+      }
+    },
+    {
+      "id": "AUTH_DKIM_FAIL",
+      "severity": "med",
+      "message": "DKIM reported as fail",
+      "evidence": {
+        "points": 15,
+        "dkim": "fail"
+      }
+    },
+    {
+      "id": "MULTIPLE_URLS",
+      "severity": "low",
+      "message": "Email contains multiple URLs",
+      "evidence": {
+        "points": 5,
+        "url_count": 5
+      }
+    },
+    {
+      "id": "MULTIPLE_DOMAINS",
+      "severity": "low",
+      "message": "Email contains multiple domains",
+      "evidence": {
+        "points": 5,
+        "unique_domains": 3
+      }
+    }
+  ],
+  "risk_score": 65,
+  "raw_preview": null
+}

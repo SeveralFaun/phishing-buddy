@@ -31,9 +31,9 @@ _URL_REGEX = re.compile(
 # URL-ish matcher that also catches common defang forms
 _URLISH_REGEX = re.compile(
     r"""(?ix)\b(
-        (?:https?|hxxps?|ftp)://[^\s<>"'{}|\\^`\[\]]+
+        (?:https?|hxxps?|ftp)://[^\s<>"'{}|\\^`]+
         |
-        www(?:\.|\[\.\])[^\s<>"'{}|\\^`\[\]]+
+        www(?:\.|\[\.\])[^\s<>"'{}|\\^`]+
     )"""
 )
 
@@ -260,10 +260,7 @@ def extract_domains(url_findings: List[UrlFinding]) -> List[DomainCount]:
                 except ValueError:
                     ext = tldextract.extract(host)
                     if ext.domain and ext.suffix:
-                        sub = ext.subdomain
-                        if sub == "www":
-                            sub = ""
-                        domain = ".".join([p for p in (sub, ext.domain, ext.suffix) if p])
+                        domain = f"{ext.domain}.{ext.suffix}"
                     else:
                         domain = host
 
